@@ -8,29 +8,20 @@ import base64
 from PIL import Image
 
 #agriculture
-
 def load_model(modelfile):
 	loaded_model = pickle.load(open(modelfile, 'rb'))
 	return loaded_model
 
-
 def main():
     # title
-
     html_temp = """
-   
     <div>
     <h4 style="color:#000000;text-align:center;font-weight:bold;font-size:58px;"> AgriPlanner </h4>
     <div>
     </div>
     <p></p>
     </div>
-    """
-    
-
-    
-      
-    
+    """  
     def add_bg_from_local(image_file):
         with open(image_file, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
@@ -45,16 +36,11 @@ def main():
             """,
             unsafe_allow_html=True
     )
-    add_bg_from_local('crop1.jpg')  
-      
-    
+    add_bg_from_local('crop1.jpg')   
     st.markdown(html_temp, unsafe_allow_html=True)
-
-         
-        
-
     states=pd.read_csv("dataset/loc.csv")
 
+    #First Row
     col1, col2,col3 = st.columns(3)
 
     # First column for Nitrogen input
@@ -80,6 +66,7 @@ def main():
             unsafe_allow_html=True
         )
         P = st.number_input("P", 1, 140)
+    # Third column for Pottasium input
     with col3:
         st.markdown(
             f"""
@@ -89,7 +76,11 @@ def main():
             """,
         unsafe_allow_html=True)
         K = st.number_input("K", 1,205)
+
+    #Second Row
     col1, col2 = st.columns(2)
+
+    #First column for Temperature input
     with col1:
         st.markdown(
             f"""
@@ -99,6 +90,7 @@ def main():
             """,
         unsafe_allow_html=True)
         temp = st.number_input("Degrees",8.0,45.0)
+    # Second column for Humidity input
     with col2:
         st.markdown(
             f"""
@@ -108,7 +100,9 @@ def main():
             """,
         unsafe_allow_html=True)
         humidity = st.number_input("in %", 14.0,100.0)
+    # Third Row
     col1, col2 = st.columns(2)
+    # First Column for Ph input
     with col1:
         st.markdown(
             f"""
@@ -118,6 +112,7 @@ def main():
             """,
         unsafe_allow_html=True)
         ph = st.number_input("level", 3.5,10.0)
+    #Second Column for Rainfall input
     with col2:
         st.markdown(
             f"""
@@ -127,6 +122,8 @@ def main():
             """,
         unsafe_allow_html=True)
         rainfall = st.number_input("in mm",19.0,300.0)
+    
+    #Fourth row
     st.markdown(
         f"""
         <span style="color:black">
@@ -136,9 +133,6 @@ def main():
     unsafe_allow_html=True)
     state_input=st.selectbox("Choose the state",sorted(['']+list(states['STATE'].unique())),1)
     district_input=st.selectbox("Choose the district",sorted(['']+list(states['DISTRICT'].unique())),1)
-
-    
-
     feature_list = [N, P, K, temp, humidity, ph, rainfall]
     
     #single_pred = np.array(feature_list).reshape(1,-1)
@@ -149,12 +143,9 @@ def main():
     button1 = st.button('Find Crop')
     button2 = st.button('Find Fertilizer')
     col1, col2,col3 = st.columns(3)
-    if button1:
-        
-        loaded_model = load_model('models/model.pkl')
-        
+    if button1:       
+        loaded_model = load_model('models/model.pkl')        
         prediction = loaded_model.predict(single_pred)
-
         col1.markdown(
             f"""
             <div style="color:black;background-color:#ffd11a;border: 1px solid black  ;border-radius: 5px;font-size:20px">
@@ -167,14 +158,9 @@ def main():
             unsafe_allow_html=True
         )
 
-       
-    
     if button2:
-    
-
         loaded_model = load_model('models/model1.pkl')
         prediction = loaded_model.predict(single_pred)
-        
         a=prediction.item().title()
         b=a.split("_")
         col1.markdown(
@@ -189,7 +175,6 @@ def main():
             """,
             unsafe_allow_html=True
         )
-   
 
         loaded_model = load_model('models/model2.pkl')
         prediction = loaded_model.predict(single_pred)
@@ -207,8 +192,7 @@ def main():
             """,
             unsafe_allow_html=True
         )
-   
-    
+          
         loaded_model = load_model('models/model3.pkl')
         prediction = loaded_model.predict(single_pred)
 
